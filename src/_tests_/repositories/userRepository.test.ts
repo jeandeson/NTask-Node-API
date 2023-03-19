@@ -1,8 +1,8 @@
-import "../config/environment";
+import "../../config/environment";
 import "reflect-metadata";
-import { User } from "../models/user";
-import UserRepository from "../repository/userRepository";
-import { createSequelize } from "../factory/sequelize.config";
+import { User } from "../../models/user";
+import UserRepository from "../../repository/userRepository";
+import { createSequelize } from "../../factory/sequelize.config";
 
 describe("userRepository", () => {
     let userRepository: UserRepository;
