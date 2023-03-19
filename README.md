@@ -1,34 +1,26 @@
-# NTask-API
-NTASK IS A NODE JS API BUILD IN TYPESCRIPT MADE USING THE BEST PRATICS TO CREATE A SCALABLE AND EASY TO MANTAIN SOFTWARE.
+"NTASK is a Node.js API built in TypeScript, made using the best practices to create scalable and easy-to-maintain software.
 
-RUN NPM I TO INSTALL THE DEPENDENCIES.
+To install the dependencies, run 'npm i'.
 
-RUN NPM TEST TO RUN THE TESTS.
+To run the tests, run 'npm test'.
 
-RUN NPM START TO RUN THE APP.
+To run the app, run 'npm start'.
 
-THE APP NEED THE ENV .env CONFIGS TO START.
+The app requires the environment configurations to be set up in the .env file.
 
-dev.env: DEVELOPMENT EVERYMENT VARIABLES.
+The 'dev.env' file contains development environment variables, and the 'test.env' file contains test environment variables. These two files need to be placed in the application root inside an 'env' folder.
 
-test.env TEST ENVERIOMENT VARIABLES.
-
-THOSES TWO FILES NEED TO BE PLACED IN THE APPLICATION ROOT INSIDE "env" FOLDER.
-
-.dev config
-example: 
+An example of the '.dev' configuration is as follows:
 port=5000
 jwtSecret=$SOM3_SECRET
 database=mylocaldb
 dialect=sqlite
 storage=./src/database/mylocaldb.sqlite
 
-.test config
-example: 
+An example of the '.test' configuration is as follows:
 port=3000
 jwtSecret=$TEST_SECRET
 database=mytestdb
 dialect=sqlite
 storage=./src/database/mytestdb.sqlite
-clearDB=true
-
+clearDB=true."
