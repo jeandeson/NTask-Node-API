@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { ICreateUserDTO } from "../types/interfaces/user/user";
 import { IUserController } from "../types/interfaces/user/userController";
 import { IUserService } from "../types/interfaces/user/userService";
 import { TYPES } from "../data/symbols";
@@ -11,6 +10,7 @@ import { InternalServerError } from "../errors/internalServer";
 import { HttpError } from "../errors/httpError";
 import { paramsValidator } from "../middlewares/paramsValidator";
 import { IPassportAuthenticator } from "../types/interfaces/auth/passportAuthenticator";
+import { RequestCreateUserDTO } from "../data/DTOs/userDTO";
 
 @controller("/user")
 export default class UserController implements IUserController {
@@ -23,8 +23,8 @@ export default class UserController implements IUserController {
     async getById(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = await this.passportAuthenticator.authenticateToken(req);
-            const user = await this.userService.getById(userId);
-            res.status(200).json(user);
+            const responseUserDTO = await this.userService.getById(userId);
+            res.status(200).json(responseUserDTO);
         } catch (error) {
             if (error instanceof HttpError) {
                 res.status(error.status).json({ error: error.message });
@@ -37,9 +37,9 @@ export default class UserController implements IUserController {
     @httpPost("/create", schemaValidator(createUserSchema))
     async post(req: Request, res: Response, next: NextFunction) {
         try {
-            const createUserDTO: ICreateUserDTO = req.body;
-            const createdUser = await this.userService.post(createUserDTO);
-            res.status(201).json({ id: createdUser.id, name: createdUser.name, email: createdUser.email });
+            const createUserDTO = new RequestCreateUserDTO(req.body);
+            const responseUserDTO = await this.userService.post(createUserDTO);
+            res.status(201).json(responseUserDTO);
         } catch (error) {
             if (error instanceof HttpError) {
                 res.status(error.status).json({ error: error.message });

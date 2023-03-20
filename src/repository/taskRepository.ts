@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { ITask, ICreateTaskDTO, IUpdateTaskDTO } from "../types/interfaces/task/task";
+import { ITask, IResponseTaskDTO, IUpdateRequestTaskDTO, IRequestCreateTaskDTO } from "../types/interfaces/task/task";
 import { ITaskRepository } from "../types/interfaces/task/taskRepository";
 import { Task } from "../models/task";
 import { TYPES } from "../data/symbols";
@@ -29,7 +29,7 @@ export class TaskRepository implements ITaskRepository {
         }
     }
 
-    async post(task: ICreateTaskDTO): Promise<ITask> {
+    async post(task: IRequestCreateTaskDTO): Promise<ITask> {
         try {
             const createdTask = await this.task.create({ ...task });
             return createdTask;
@@ -39,7 +39,7 @@ export class TaskRepository implements ITaskRepository {
         }
     }
 
-    async put(id: number, task: IUpdateTaskDTO): Promise<[affectedCount: number]> {
+    async put(id: number, task: IUpdateRequestTaskDTO): Promise<[affectedCount: number]> {
         try {
             const affectedCount = await this.task.update({ ...task }, { where: { id } });
             return affectedCount;

@@ -2,8 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { inject } from "inversify";
 import { controller, httpDelete, httpGet, httpPost, httpPut } from "inversify-express-utils";
 import { TYPES } from "../data/symbols";
-import { TaskService } from "../services/taskService";
-import { ICreateTaskDTO, IUpdateTaskDTO } from "../types/interfaces/task/task";
 import { schemaValidator } from "../middlewares/schemaValidator";
 import { createTaskSchema, updateTaskSchema } from "../data/schemas/taskSchema";
 import { ITaskController } from "../types/interfaces/task/taskController";
@@ -12,6 +10,7 @@ import { InternalServerError } from "../errors/internalServer";
 import { paramsValidator } from "../middlewares/paramsValidator";
 import { ITaskService } from "../types/interfaces/task/taskService";
 import { IPassportAuthenticator } from "../types/interfaces/auth/passportAuthenticator";
+import { RequestCreateTaskDTO, UpdateRequestTaskDTO } from "../data/DTOs/taskDTO";
 
 @controller("/task")
 export class TaskController implements ITaskController {
@@ -24,8 +23,8 @@ export class TaskController implements ITaskController {
     async getAll(req: Request, res: Response, next: NextFunction) {
         try {
             const id = await this.passportAuthenticator.authenticateToken(req);
-            const allTasks = await this.taskService.getAll(id);
-            res.status(200).json(allTasks);
+            const responseTasksDTO = await this.taskService.getAll(id);
+            res.status(200).json(responseTasksDTO);
         } catch (error) {
             if (error instanceof HttpError) {
                 res.status(error.status).json({ error: error.message });
@@ -40,8 +39,8 @@ export class TaskController implements ITaskController {
         try {
             await this.passportAuthenticator.authenticateToken(req);
             const { id } = req.params;
-            const task = await this.taskService.getById(parseInt(id));
-            res.status(200).json(task.dataValues);
+            const responseTaskDTO = await this.taskService.getById(parseInt(id));
+            res.status(200).json(responseTaskDTO);
         } catch (error) {
             if (error instanceof HttpError) {
                 res.status(error.status).json({ error: error.message });
@@ -55,9 +54,9 @@ export class TaskController implements ITaskController {
     async post(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = await this.passportAuthenticator.authenticateToken(req);
-            const createTaskDTO: ICreateTaskDTO = { userId: userId, tag: req.body.tag, title: req.body.title };
-            const createdTask = await this.taskService.post(createTaskDTO);
-            res.status(201).json({ ...createdTask.dataValues });
+            const createTaskDTO = new RequestCreateTaskDTO({ userId: userId, tag: req.body.tag, title: req.body.title });
+            const responseTaskDT = await this.taskService.post(createTaskDTO);
+            res.status(201).json(responseTaskDT);
         } catch (error) {
             if (error instanceof HttpError) {
                 res.status(error.status).json({ error: error.message });
@@ -71,9 +70,8 @@ export class TaskController implements ITaskController {
     async put(req: Request, res: Response, next: NextFunction) {
         try {
             await this.passportAuthenticator.authenticateToken(req);
-            const { id } = req.params;
-            const body: IUpdateTaskDTO = req.body;
-            const affectedCount = await this.taskService.put(parseInt(id), body);
+            const updateRequestTaskDTO = new UpdateRequestTaskDTO(req.body);
+            const affectedCount = await this.taskService.put(parseInt(req.params.id), updateRequestTaskDTO);
             res.status(200).json({ affectedCount });
         } catch (error: unknown) {
             if (error instanceof HttpError) {

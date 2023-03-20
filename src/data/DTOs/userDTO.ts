@@ -1,8 +1,8 @@
 import { ModelStatic } from "sequelize";
 import { User } from "../../models/user";
-import { ICreateUserDTO } from "../../types/interfaces/user/user";
+import { IRequestCreateUserDTO, IResponseUserDTO } from "../../types/interfaces/user/user";
 
-export class CreateUserDTO implements ICreateUserDTO {
+export class RequestCreateUserDTO implements IRequestCreateUserDTO {
     public name: string;
     public email: string;
     public password: string;
@@ -10,5 +10,17 @@ export class CreateUserDTO implements ICreateUserDTO {
         this.name = payload.name;
         this.email = payload.email;
         this.password = payload.password;
+    }
+}
+
+export class ResponseUserDTO implements IResponseUserDTO {
+    public id: number;
+    public name: string;
+    public email: string;
+
+    constructor(payload: { name: string; email: string; id: number }) {
+        this.id = payload.id;
+        this.name = payload.name;
+        this.email = payload.email;
     }
 }

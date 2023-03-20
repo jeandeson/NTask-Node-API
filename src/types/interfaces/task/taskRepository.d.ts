@@ -1,9 +1,9 @@
-import { ITask, ICreateTaskDTO, IUpdateTaskDTO } from "./task";
+import { ITask, IResponseTaskDTO, IRequestCreateTaskDTO, IUpdateRequestTaskDTO } from "./task";
 
 export interface ITaskRepository {
     findAll(id: number): Promise<ITask[]>;
     findById(id: number): Promise<ITask | null>;
-    post(task: ICreateTaskDTO): Promise<ITask>;
-    put(id: number, task: IUpdateTaskDTO): Promise<[affectedCount: number]>;
+    post(task: IRequestCreateTaskDTO): Promise<ITask>;
+    put(id: number, task: IUpdateRequestTaskDTO): Promise<[affectedCount: number]>;
     delete(id: number): Promise<number>;
 }

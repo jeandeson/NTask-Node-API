@@ -1,53 +1,54 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../data/symbols";
-import { ITask, ICreateTaskDTO, IUpdateTaskDTO } from "../types/interfaces/task/task";
+import { IResponseTaskDTO, IUpdateRequestTaskDTO, IRequestCreateTaskDTO } from "../types/interfaces/task/task";
 import { ITaskService } from "../types/interfaces/task/taskService";
 import { ITaskRepository } from "../types/interfaces/task/taskRepository";
 import { NotFoundError } from "../errors/notFound";
 import { BadRequestError } from "../errors/badRequest";
 import { InternalServerError } from "../errors/internalServer";
+import { ResponseTaskDTO } from "../data/DTOs/taskDTO";
 
 @injectable()
 export class TaskService implements ITaskService {
     constructor(@inject(TYPES.TaskRepository) private taskRepository: ITaskRepository) {}
 
-    async getAll(id: number): Promise<ITask[]> {
+    async getAll(id: number): Promise<IResponseTaskDTO[]> {
         try {
             const allTasks = await this.taskRepository.findAll(id);
             if (allTasks.length === 0) {
                 throw new NotFoundError("Theres no tasks to retrieve");
             }
-            return allTasks;
+            return allTasks.map((task) => new ResponseTaskDTO(task.dataValues));
         } catch (error) {
             console.error(error);
             throw error;
         }
     }
 
-    async getById(id: number): Promise<ITask> {
+    async getById(id: number): Promise<IResponseTaskDTO> {
         try {
             const task = await this.taskRepository.findById(id);
             if (!task) {
                 throw new NotFoundError(`Task with id ${id} not found.`);
             }
-            return task;
+            return new ResponseTaskDTO(task.dataValues);
         } catch (error) {
             console.error(error);
             throw error;
         }
     }
 
-    async post(task: ICreateTaskDTO): Promise<ITask> {
+    async post(task: IRequestCreateTaskDTO): Promise<IResponseTaskDTO> {
         try {
             const createdTask = await this.taskRepository.post(task);
-            return createdTask;
+            return new ResponseTaskDTO(createdTask.dataValues);
         } catch (error) {
             console.error(error);
             throw new InternalServerError("error attempting to insert task.");
         }
     }
 
-    async put(id: number, task: IUpdateTaskDTO): Promise<[affectedCount: number]> {
+    async put(id: number, task: IUpdateRequestTaskDTO): Promise<[affectedCount: number]> {
         try {
             const affectedCount = await this.taskRepository.put(id, task);
             if (affectedCount[0] <= 0) {

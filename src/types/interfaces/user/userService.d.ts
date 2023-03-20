@@ -1,7 +1,7 @@
-import { IUser, ICreateUserDTO } from "./user";
+import { IUser, IRequestCreateUserDTO, IResponseUserDTO } from "./user";
 
 export interface IUserService {
-    getById(id: number): Promise<IUser | null>;
-    post(user: ICreateUserDTO): Promise<IUser>;
+    getById(id: number): Promise<IResponseUserDTO | null>;
+    post(user: IRequestCreateUserDTO): Promise<IResponseUserDTO>;
     delete(id: number): Promise<number>;
 }

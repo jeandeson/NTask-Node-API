@@ -7,8 +7,14 @@ export interface IUser extends Model {
     password: string;
 }
 
-export interface ICreateUserDTO {
+export interface IRequestCreateUserDTO {
     name: string;
     email: string;
     password: string;
+}
+
+export interface IResponseUserDTO {
+    id: number;
+    name: string;
+    email: string;
 }

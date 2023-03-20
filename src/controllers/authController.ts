@@ -1,9 +1,8 @@
-import { inject, injectable } from "inversify";
+import { inject } from "inversify";
 import { TYPES } from "../data/symbols";
 import { IPassportAuthenticator } from "../types/interfaces/auth/passportAuthenticator";
-import { controller, httpGet, httpPost } from "inversify-express-utils";
+import { controller, httpPost } from "inversify-express-utils";
 import { Request, Response, NextFunction } from "express";
-import { IUser } from "../types/interfaces/user/user";
 import { HttpError } from "../errors/httpError";
 import { InternalServerError } from "../errors/internalServer";
 import { loginSchema } from "../data/schemas/loginSchema";
@@ -21,7 +20,6 @@ export class AuthController {
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = await this.passportAuthenticator.authenticate(req);
-            const user: IUser = req.body;
             const jwtToken = this.passportAuthenticator.generateJwtToken(userId);
             return res.status(200).json({ token: jwtToken });
         } catch (error) {
