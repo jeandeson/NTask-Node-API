@@ -5,7 +5,6 @@ import { Task } from "../models/task";
 import { TYPES } from "../data/symbols";
 import { InternalServerError } from "../errors/internalServer";
 
-@injectable()
 export class TaskRepository implements ITaskRepository {
     constructor(@inject(TYPES.Task) private task: typeof Task) {}
 

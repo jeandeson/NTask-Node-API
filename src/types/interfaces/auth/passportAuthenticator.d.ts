@@ -3,7 +3,7 @@ import { IUser } from "../user/user";
 import passportLocal from "passport-local";
 import { Strategy } from "passport-jwt";
 
-export interface IPassportAuthenticator {
+export interface IAuthService {
     initialize(): e.Handler;
     localStrategy: passportLocal.Strategy;
     jwtStrategy: Strategy;

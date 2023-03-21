@@ -7,14 +7,13 @@ import passportLocal from "passport-local";
 import passportJwt, { ExtractJwt } from "passport-jwt";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { IPassportAuthenticator } from "../types/interfaces/auth/passportAuthenticator";
+import { IAuthService } from "../types/interfaces/auth/passportAuthenticator";
 import { NotFoundError } from "../errors/notFound";
 import { BadRequestError } from "../errors/badRequest";
 import { Request } from "express";
 import { Unauthorized } from "../errors/unauthorized";
 
-@injectable()
-export class PassportAuthenticator implements IPassportAuthenticator {
+export class AuthService implements IAuthService {
     public localStrategy: passportLocal.Strategy;
     public jwtStrategy: passportJwt.Strategy;
 

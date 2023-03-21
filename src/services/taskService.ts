@@ -8,7 +8,6 @@ import { BadRequestError } from "../errors/badRequest";
 import { InternalServerError } from "../errors/internalServer";
 import { ResponseTaskDTO } from "../data/DTOs/taskDTO";
 
-@injectable()
 export class TaskService implements ITaskService {
     constructor(@inject(TYPES.TaskRepository) private taskRepository: ITaskRepository) {}
 

@@ -3,7 +3,6 @@ import { User } from "./user";
 import { injectable } from "inversify";
 import { ITask } from "../types/interfaces/task/task";
 
-@injectable()
 export class Task extends Model implements ITask {
     public id!: number;
     public title!: string;

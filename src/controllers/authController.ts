@@ -1,6 +1,6 @@
 import { inject } from "inversify";
 import { TYPES } from "../data/symbols";
-import { IPassportAuthenticator } from "../types/interfaces/auth/passportAuthenticator";
+import { IAuthService } from "../types/interfaces/auth/passportAuthenticator";
 import { controller, httpPost } from "inversify-express-utils";
 import { Request, Response, NextFunction } from "express";
 import { HttpError } from "../errors/httpError";
@@ -10,9 +10,9 @@ import { schemaValidator } from "../middlewares/schemaValidator";
 
 @controller("/auth")
 export class AuthController {
-    private passportAuthenticator: IPassportAuthenticator;
+    private passportAuthenticator: IAuthService;
 
-    constructor(@inject(TYPES.PassportAuthenticator) passportAuthenticator: IPassportAuthenticator) {
+    constructor(@inject(TYPES.AuthService) passportAuthenticator: IAuthService) {
         this.passportAuthenticator = passportAuthenticator;
     }
 

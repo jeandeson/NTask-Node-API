@@ -7,7 +7,6 @@ import { BadRequestError } from "../errors/badRequest";
 import { NotFoundError } from "../errors/notFound";
 import { ResponseUserDTO } from "../data/DTOs/userDTO";
 
-@injectable()
 export class UserService implements IUserService {
     constructor(@inject(TYPES.UserRepository) private userRepository: IUserRepository) {}
 

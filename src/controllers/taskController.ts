@@ -9,14 +9,14 @@ import { HttpError } from "../errors/httpError";
 import { InternalServerError } from "../errors/internalServer";
 import { paramsValidator } from "../middlewares/paramsValidator";
 import { ITaskService } from "../types/interfaces/task/taskService";
-import { IPassportAuthenticator } from "../types/interfaces/auth/passportAuthenticator";
+import { IAuthService } from "../types/interfaces/auth/passportAuthenticator";
 import { RequestCreateTaskDTO, UpdateRequestTaskDTO } from "../data/DTOs/taskDTO";
 
 @controller("/task")
 export class TaskController implements ITaskController {
     constructor(
         @inject(TYPES.TaskService) private taskService: ITaskService,
-        @inject(TYPES.PassportAuthenticator) private passportAuthenticator: IPassportAuthenticator
+        @inject(TYPES.AuthService) private passportAuthenticator: IAuthService
     ) {}
 
     @httpGet("/getAll")

@@ -9,14 +9,14 @@ import { createUserSchema } from "../data/schemas/userSchema";
 import { InternalServerError } from "../errors/internalServer";
 import { HttpError } from "../errors/httpError";
 import { paramsValidator } from "../middlewares/paramsValidator";
-import { IPassportAuthenticator } from "../types/interfaces/auth/passportAuthenticator";
+import { IAuthService } from "../types/interfaces/auth/passportAuthenticator";
 import { RequestCreateUserDTO } from "../data/DTOs/userDTO";
 
 @controller("/user")
-export default class UserController implements IUserController {
+export class UserController implements IUserController {
     constructor(
         @inject(TYPES.UserService) private userService: IUserService,
-        @inject(TYPES.PassportAuthenticator) private passportAuthenticator: IPassportAuthenticator
+        @inject(TYPES.AuthService) private passportAuthenticator: IAuthService
     ) {}
 
     @httpGet("/getById")

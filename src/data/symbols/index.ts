@@ -6,5 +6,5 @@ export const TYPES = {
     Sequelize: Symbol.for("Sequelize"),
     Task: Symbol.for("Task"),
     User: Symbol.for("User"),
-    PassportAuthenticator: Symbol.for("PassportAuthenticator"),
+    AuthService: Symbol.for("AuthService"),
 };
