@@ -1,0 +1,453 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "NTASK-API",
+        "description": "NTASK MANAGER NODEJS API",
+        "version": 1.0
+    },
+    "basePath": "v1",
+    "schemes": ["http", "https"],
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Authentication endpoint"
+        },
+        {
+            "name": "User",
+            "description": "User endpoint"
+        },
+        {
+            "tasks": "Task",
+            "description": "Task endpoint"
+        }
+    ],
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Bearer token"
+        }
+    },
+    "definitions": {
+        "affectedCount": {
+            "type": "array",
+            "items": "number"
+        },
+        "loginSchema": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            },
+            "required": ["email", "password"]
+        },
+        "createUserSchema": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            },
+            "required": ["name", "email", "password"]
+        },
+        "responseUserSchema": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                }
+            },
+            "required": ["name", "email", "password"]
+        },
+        "responseTaskSchema": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number"
+                },
+                "userId": {
+                    "type": "number"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "bool"
+                },
+                "tag": {
+                    "type": "string"
+                }
+            },
+            "required": ["name", "email", "password"]
+        },
+        "createTaskSchema": {
+            "type": "object",
+            "properties": {
+                "title": "string",
+                "tag": "string"
+            },
+            "required": ["title", "tag"]
+        },
+        "updateTaskSchema": {
+            "title": "title",
+            "tag": "string",
+            "completed": "bool"
+        },
+        "required": ["title", "tag", "completed"]
+    },
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "tags": ["Authentication"],
+                "summary": "Authenticate user",
+                "description": "Authenticate user and return a json-web-token",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "User login information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/loginSchema"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Authentication Successful",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "token": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body"
+                    },
+                    "401": {
+                        "description": "Unauthorized "
+                    },
+                    "500": {
+                        "description": "Internal Server error"
+                    }
+                }
+            }
+        },
+        "/user/create": {
+            "post": {
+                "tags": ["User"],
+                "summary": "Create a User",
+                "description": "Create a user and return a UserDTO",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "User create information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/createUserSchema"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Register Successful",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "$ref": "#/definitions/responseUserSchema"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    },
+
+                    "500": {
+                        "description": "Internal Server error"
+                    }
+                }
+            }
+        },
+        "/user/getById": {
+            "get": {
+                "tags": ["User"],
+                "summary": "Get a User",
+                "description": "Find a user by id and return a UserDTO",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search Successful",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "$ref": "#/definitions/responseUserSchema"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server error"
+                    }
+                }
+            }
+        },
+        "/user/delete": {
+            "delete": {
+                "tags": ["User"],
+                "summary": "Delete a User",
+                "description": "Find a user by id delete and return a the result",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete Successful"
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server error"
+                    }
+                }
+            }
+        },
+        "/task/create": {
+            "post": {
+                "tags": ["Task"],
+                "summary": "Create a Task",
+                "description": "Create a task and return a UserDTO",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Task create information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/responseTaskSchema"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created Successful",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "$ref": "#/definitions/responseUserSchema"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server error"
+                    }
+                }
+            }
+        },
+        "/task/getAll": {
+            "get": {
+                "tags": ["Task"],
+                "summary": "Get all Task",
+                "description": "Find all tasks and return",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search Successful",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/responseTaskSchema"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server error"
+                    }
+                }
+            }
+        },
+        "/task/getById/{id}": {
+            "get": {
+                "tags": ["Task"],
+                "summary": "Get a Task",
+                "description": "Find a task by id and return",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "task id to retrieve",
+                        "required": "true",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search Successful",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "$ref": "#/definitions/responseTaskSchema"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server error"
+                    }
+                }
+            }
+        },
+
+        "/task/update/{id}": {
+            "update": {
+                "tags": ["Task"],
+                "summary": "Get a Task",
+                "description": "update a task by id and return",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "task id to update",
+                        "required": "true",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated Successful",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "$ref": "#/definitions/responseTaskSchema"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server error"
+                    }
+                }
+            }
+        },
+        "/task/delete": {
+            "delete": {
+                "tags": ["Task"],
+                "summary": "Delete a Task",
+                "description": "Find a task by id delete and return the result",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete Successful"
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server error"
+                    }
+                }
+            }
+        }
+    }
+}

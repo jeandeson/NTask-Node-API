@@ -8,6 +8,8 @@ import errorHandler from "./src/middlewares/errorHandler";
 import { TYPES } from "./src/data/symbols";
 import { IAuthService } from "./src/types/interfaces/auth/passportAuthenticator";
 import express from "express";
+import swaggerUi from "swagger-ui-express";
+import swaggerDoc from "./swagger.json";
 
 const server = new InversifyExpressServer(iocContainer);
 
@@ -17,6 +19,7 @@ const passport: IAuthService = iocContainer.get(TYPES.AuthService);
 
 server.setConfig((app) => {
     config(app);
+    app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(passport.initialize());
