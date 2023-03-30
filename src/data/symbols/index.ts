@@ -7,4 +7,5 @@ export const TYPES = {
     Task: Symbol.for("Task"),
     User: Symbol.for("User"),
     AuthService: Symbol.for("AuthService"),
+    MailService: Symbol.for("MailService"),
 };

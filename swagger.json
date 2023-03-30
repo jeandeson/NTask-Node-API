@@ -5,7 +5,6 @@
         "description": "NTASK MANAGER NODEJS API",
         "version": 1.0
     },
-    "basePath": "v1",
     "schemes": ["http", "https"],
     "tags": [
         {
@@ -32,9 +31,19 @@
     "definitions": {
         "affectedCount": {
             "type": "array",
-            "items": "number"
+            "items": {
+                "type": "number"
+            }
         },
-        "loginSchema": {
+        "forgotPassword": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "login": {
             "type": "object",
             "properties": {
                 "email": {
@@ -46,7 +55,7 @@
             },
             "required": ["email", "password"]
         },
-        "createUserSchema": {
+        "createUser": {
             "type": "object",
             "properties": {
                 "name": {
@@ -61,7 +70,7 @@
             },
             "required": ["name", "email", "password"]
         },
-        "responseUserSchema": {
+        "responseUser": {
             "type": "object",
             "properties": {
                 "id": {
@@ -76,7 +85,7 @@
             },
             "required": ["name", "email", "password"]
         },
-        "responseTaskSchema": {
+        "responseTask": {
             "type": "object",
             "properties": {
                 "id": {
@@ -97,20 +106,27 @@
             },
             "required": ["name", "email", "password"]
         },
-        "createTaskSchema": {
+        "createTask": {
             "type": "object",
             "properties": {
-                "title": "string",
-                "tag": "string"
+                "title": {
+                    "type": "string"
+                },
+                "tag": {
+                    "type": "string"
+                }
             },
             "required": ["title", "tag"]
         },
-        "updateTaskSchema": {
-            "title": "title",
-            "tag": "string",
-            "completed": "bool"
-        },
-        "required": ["title", "tag", "completed"]
+        "updateTask": {
+            "type": "object",
+            "properties": {
+                "title": "title",
+                "tag": "string",
+                "completed": "bool"
+            },
+            "required": ["title", "tag", "completed"]
+        }
     },
     "paths": {
         "/auth/login": {
@@ -127,7 +143,7 @@
                         "description": "User login information",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/loginSchema"
+                            "$ref": "#/definitions/login"
                         }
                     }
                 ],
@@ -155,6 +171,97 @@
                 }
             }
         },
+        "/auth/forgotPassword": {
+            "post": {
+                "tags": ["Authentication"],
+                "summary": "Send reset a token to user",
+                "description": "Validate the email and send a json-web-token to user email",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "email",
+                        "description": "User email information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forgotPassword"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Email sent Successful",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Internal Server error"
+                    }
+                }
+            }
+        },
+        "/auth/resetPassword/:token": {
+            "post": {
+                "tags": ["Authentication"],
+                "summary": "Reset user password",
+                "description": "Validate the json-web-token and reset the user password",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "password",
+                        "description": "New user password information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/forgotPassword"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "token",
+                        "description": "user reset token sent to email",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Email sent Successful",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "token": {
+                                    "message": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Internal Server error"
+                    }
+                }
+            }
+        },
         "/user/create": {
             "post": {
                 "tags": ["User"],
@@ -169,7 +276,7 @@
                         "description": "User create information",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/createUserSchema"
+                            "$ref": "#/definitions/createUser"
                         }
                     }
                 ],
@@ -179,7 +286,7 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "$ref": "#/definitions/responseUserSchema"
+                                "$ref": "#/definitions/responseUser"
                             }
                         }
                     },
@@ -211,7 +318,7 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "$ref": "#/definitions/responseUserSchema"
+                                "$ref": "#/definitions/responseUser"
                             }
                         }
                     },
@@ -274,7 +381,7 @@
                         "description": "Task create information",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/responseTaskSchema"
+                            "$ref": "#/definitions/responseTask"
                         }
                     }
                 ],
@@ -284,7 +391,7 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "$ref": "#/definitions/responseUserSchema"
+                                "$ref": "#/definitions/responseUser"
                             }
                         }
                     },
@@ -318,7 +425,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/responseTaskSchema"
+                                "$ref": "#/definitions/responseTask"
                             }
                         }
                     },
@@ -351,7 +458,7 @@
                         "name": "id",
                         "in": "path",
                         "description": "task id to retrieve",
-                        "required": "true",
+                        "required": true,
                         "type": "string"
                     }
                 ],
@@ -361,7 +468,7 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "$ref": "#/definitions/responseTaskSchema"
+                                "$ref": "#/definitions/responseTask"
                             }
                         }
                     },
@@ -395,7 +502,7 @@
                         "name": "id",
                         "in": "path",
                         "description": "task id to update",
-                        "required": "true",
+                        "required": true,
                         "type": "string"
                     }
                 ],
@@ -405,7 +512,7 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "$ref": "#/definitions/responseTaskSchema"
+                                "$ref": "#/definitions/responseTask"
                             }
                         }
                     },

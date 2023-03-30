@@ -1,20 +1,22 @@
 import app from "../../../app";
 import request from "supertest";
-import { initTestDB } from "../sequelize";
-import { v4 as uuidv4 } from "uuid";
+import { closeTestDB, initTestDB } from "../sequelize";
+import { Sequelize } from "sequelize";
+import { getTestJwtToken } from "../utils/testUtils";
 
 describe("ENDPOINT /task/", function () {
-    let validToken: string;
-    beforeAll(async () => {
-        await initTestDB();
-        const uuid = uuidv4();
-        const createUserDTO = { name: "John Doe", email: `${uuid}@example.com`, password: uuid };
-        await request(app).post("/user/create").send(createUserDTO);
-        const loginRes = await request(app).post("/auth/login").send({ email: createUserDTO.email, password: uuid });
-        validToken = loginRes.body.token;
+    let sequelize: Sequelize;
+
+    beforeEach(async () => {
+        sequelize = await initTestDB();
+    });
+
+    afterEach(async () => {
+        await closeTestDB();
     });
 
     it("POST create - it should create a new task", async () => {
+        let validToken = await getTestJwtToken(sequelize);
         const createTaskDTO = { title: "Wash Car", tag: "Home" };
         const createTaskRes = await request(app)
             .post("/task/create")
@@ -24,6 +26,7 @@ describe("ENDPOINT /task/", function () {
         expect(createTaskRes.statusCode).toBe(201);
     });
     it("GET getById - it should return a task and status 200", async () => {
+        let validToken = await getTestJwtToken(sequelize);
         const createTaskDTO = { title: "Wash Car", tag: "Home" };
         const createTaskRes = await request(app)
             .post("/task/create")
@@ -37,6 +40,7 @@ describe("ENDPOINT /task/", function () {
         expect(getRes.statusCode).toBe(200);
     });
     it("put update - it should update a task and return status 200", async () => {
+        let validToken = await getTestJwtToken(sequelize);
         const createTaskDTO = { title: "Wash Car", tag: "Home" };
         const createTaskRes = await request(app)
             .post("/task/create")

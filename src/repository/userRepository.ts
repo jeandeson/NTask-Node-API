@@ -8,34 +8,28 @@ export default class UserRepository implements IUserRepository {
     constructor(@inject(TYPES.User) private user: typeof User) {}
 
     async getById(id: number) {
-        try {
-            return await this.user.findByPk(id);
-        } catch (error) {
-            throw error;
-        }
+        return await this.user.findByPk(id);
     }
 
     async getByEmail(email: string) {
-        try {
-            return await this.user.findOne({ where: { email } });
-        } catch (error) {
-            throw error;
-        }
+        return await this.user.findOne({ where: { email } });
     }
 
     async post(user: IRequestCreateUserDTO) {
-        try {
-            return await this.user.create({ ...user });
-        } catch (error) {
-            throw error;
-        }
+        return await this.user.create({ ...user });
+    }
+
+    async updatePassword(id: number, password: string) {
+        const updateResult = await this.user.update({ password }, { where: { id } });
+        await this.updatePasswordResetTokenHash(id, null, null);
+        return updateResult;
+    }
+
+    async updatePasswordResetTokenHash(id: number, passwordResetTokenHash: string | null, passwordResetExpiresAt: Date | null) {
+        return await this.user.update({ passwordResetExpiresAt, passwordResetTokenHash }, { where: { id } });
     }
 
     async delete(id: number) {
-        try {
-            return await this.user.destroy({ where: { id } });
-        } catch (error) {
-            throw error;
-        }
+        return await this.user.destroy({ where: { id } });
     }
 }

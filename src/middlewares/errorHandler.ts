@@ -2,11 +2,18 @@ import { Request, Response, NextFunction } from "express";
 import { HttpError } from "../errors/httpError";
 
 export default function errorHandler(error: Error, req: Request, res: Response, next: NextFunction): Response {
-    if (error instanceof HttpError) {
-        return res.status(400).json({ message: error.message });
+    try {
+        if (error instanceof HttpError) {
+            return res.status(error.status).json({ message: error.message });
+        } else if (error instanceof Error) {
+            console.error(error);
+            return res.status(500).json({ message: error.message });
+        } else {
+            console.error("Unknown error occurred:", error);
+            return res.status(500).json({ message: "Unknown error occurred" });
+        }
+    } catch (err) {
+        console.error("Unknown error occurred:", err);
+        return res.status(500).json({ message: "Unknown error occurred" });
     }
-
-    console.error(error);
-
-    return res.status(500).json({ message: "Internal server error" });
 }

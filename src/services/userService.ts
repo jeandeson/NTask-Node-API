@@ -24,7 +24,6 @@ export class UserService implements IUserService {
             throw new BadRequestError(`email already exists: ${existingUser.email}`);
         }
         const createdUser = await this.userRepository.post(user);
-
         return new ResponseUserDTO(createdUser.dataValues);
     }
 

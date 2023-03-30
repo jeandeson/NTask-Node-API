@@ -6,7 +6,7 @@ import { iocContainer } from "./src/inversify/ioc";
 import { createSequelize } from "./src/factory/sequelize.config";
 import errorHandler from "./src/middlewares/errorHandler";
 import { TYPES } from "./src/data/symbols";
-import { IAuthService } from "./src/types/interfaces/auth/passportAuthenticator";
+import { IAuthService } from "./src/types/interfaces/auth/authService";
 import express from "express";
 import swaggerUi from "swagger-ui-express";
 import swaggerDoc from "./swagger.json";

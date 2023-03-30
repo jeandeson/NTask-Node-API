@@ -10,4 +10,7 @@ export interface IAuthService {
     authenticate(req: Request): Promise<number>;
     authenticateToken(req: Request): Promise<number>;
     generateJwtToken(id: number): string;
+    generateResetToken(email: string): Promise<string>;
+    resetPassword(token: string, password: string): Promise<number[]>;
+    validateToken(token: string): Promise<IUser>;
 }

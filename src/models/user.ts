@@ -1,13 +1,15 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { Task } from "./task";
 import bcrypt from "bcrypt";
+import { IUser } from "../types/interfaces/user/user";
 
-export class User extends Model {
+export class User extends Model implements IUser {
     public id!: number;
     public name!: string;
     public email!: string;
     public password!: string;
-
+    public passwordResetTokenHash?: string;
+    public passwordResetExpiresAt?: Date;
     static initModel(sequelize: Sequelize) {
         User.init(
             {
@@ -28,6 +30,16 @@ export class User extends Model {
                 password: {
                     type: DataTypes.STRING,
                     allowNull: false,
+                },
+                passwordResetTokenHash: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                    defaultValue: null,
+                },
+                passwordResetExpiresAt: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                    defaultValue: null,
                 },
             },
             {

@@ -9,7 +9,7 @@ import { createUserSchema } from "../data/schemas/userSchema";
 import { InternalServerError } from "../errors/internalServer";
 import { HttpError } from "../errors/httpError";
 import { paramsValidator } from "../middlewares/paramsValidator";
-import { IAuthService } from "../types/interfaces/auth/passportAuthenticator";
+import { IAuthService } from "../types/interfaces/auth/authService";
 import { RequestCreateUserDTO } from "../data/DTOs/userDTO";
 
 @controller("/user")

@@ -6,12 +6,19 @@ import passport from "passport";
 import passportLocal from "passport-local";
 import passportJwt, { ExtractJwt } from "passport-jwt";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { IAuthService } from "../types/interfaces/auth/passportAuthenticator";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { IAuthService } from "../types/interfaces/auth/authService";
 import { NotFoundError } from "../errors/notFound";
 import { BadRequestError } from "../errors/badRequest";
 import { Request } from "express";
 import { Unauthorized } from "../errors/unauthorized";
+import { InternalServerError } from "../errors/internalServer";
+import { IUser } from "../types/interfaces/user/user";
+import { HttpError } from "../errors/httpError";
+
+interface DecodedToken extends JwtPayload {
+    sub: string;
+}
 
 export class AuthService implements IAuthService {
     public localStrategy: passportLocal.Strategy;
@@ -77,6 +84,56 @@ export class AuthService implements IAuthService {
         const payload = { sub: id };
         const token = jwt.sign(payload, passportCfg.jwtSecret, { expiresIn: "1d" });
         return token;
+    }
+
+    async generateResetToken(email: string) {
+        const user = await this.userRepository.getByEmail(email);
+        if (!user) {
+            throw new NotFoundError("Email not found");
+        }
+        const token = this.generateJwtToken(user.id);
+        const passwordResetTokenHash = await bcrypt.hash(token, 10);
+        const passwordResetExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
+        await this.userRepository.updatePasswordResetTokenHash(user.id, passwordResetTokenHash, passwordResetExpiresAt);
+        return token;
+    }
+
+    verifyToken(token: string): DecodedToken {
+        try {
+            return jwt.verify(token, passportCfg.jwtSecret) as DecodedToken;
+        } catch (error) {
+            if (error instanceof jwt.TokenExpiredError) {
+                throw new Unauthorized("Token expired");
+            } else if (error instanceof jwt.JsonWebTokenError) {
+                throw new Unauthorized("Token content doesn't match");
+            }
+            throw error;
+        }
+    }
+
+    async validateToken(token: string): Promise<IUser> {
+        const { sub: id } = this.verifyToken(token);
+        const user = await this.userRepository.getById(parseInt(id));
+        if (user == null || user.passwordResetTokenHash == null || user.passwordResetExpiresAt == null) {
+            if (!user) {
+                throw new BadRequestError("user not found");
+            }
+            throw new BadRequestError("password reset token has not yet been generated");
+        }
+        const match = bcrypt.compareSync(token, user.passwordResetTokenHash);
+        const isValid = user.passwordResetExpiresAt > new Date();
+        if (!match || !isValid) {
+            if (!isValid) {
+                throw new Unauthorized("Token expired");
+            }
+            throw new Unauthorized("Token content doesn't match");
+        }
+        return user;
+    }
+
+    async resetPassword(token: string, password: string) {
+        const user = await this.validateToken(token);
+        return await this.userRepository.updatePassword(user.id, password);
     }
 
     authenticateToken(req: Request): Promise<number> {

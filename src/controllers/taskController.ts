@@ -5,11 +5,9 @@ import { TYPES } from "../data/symbols";
 import { schemaValidator } from "../middlewares/schemaValidator";
 import { createTaskSchema, updateTaskSchema } from "../data/schemas/taskSchema";
 import { ITaskController } from "../types/interfaces/task/taskController";
-import { HttpError } from "../errors/httpError";
-import { InternalServerError } from "../errors/internalServer";
 import { paramsValidator } from "../middlewares/paramsValidator";
 import { ITaskService } from "../types/interfaces/task/taskService";
-import { IAuthService } from "../types/interfaces/auth/passportAuthenticator";
+import { IAuthService } from "../types/interfaces/auth/authService";
 import { RequestCreateTaskDTO, UpdateRequestTaskDTO } from "../data/DTOs/taskDTO";
 
 @controller("/task")
@@ -26,11 +24,7 @@ export class TaskController implements ITaskController {
             const responseTasksDTO = await this.taskService.getAll(id);
             res.status(200).json(responseTasksDTO);
         } catch (error) {
-            if (error instanceof HttpError) {
-                res.status(error.status).json({ error: error.message });
-            } else {
-                next(new InternalServerError());
-            }
+            throw error;
         }
     }
 
@@ -42,11 +36,7 @@ export class TaskController implements ITaskController {
             const responseTaskDTO = await this.taskService.getById(parseInt(id));
             res.status(200).json(responseTaskDTO);
         } catch (error) {
-            if (error instanceof HttpError) {
-                res.status(error.status).json({ error: error.message });
-            } else {
-                next(new InternalServerError());
-            }
+            throw error;
         }
     }
 
@@ -58,11 +48,7 @@ export class TaskController implements ITaskController {
             const responseTaskDT = await this.taskService.post(createTaskDTO);
             res.status(201).json(responseTaskDT);
         } catch (error) {
-            if (error instanceof HttpError) {
-                res.status(error.status).json({ error: error.message });
-            } else {
-                next(new InternalServerError());
-            }
+            throw error;
         }
     }
 
@@ -74,11 +60,7 @@ export class TaskController implements ITaskController {
             const affectedCount = await this.taskService.put(parseInt(req.params.id), updateRequestTaskDTO);
             res.status(200).json({ affectedCount });
         } catch (error: unknown) {
-            if (error instanceof HttpError) {
-                res.status(error.status).json({ error: error.message });
-            } else {
-                next(new InternalServerError());
-            }
+            throw error;
         }
     }
 
@@ -89,11 +71,7 @@ export class TaskController implements ITaskController {
             const affectedCount = await this.taskService.delete(userId);
             res.status(200).json({ affectedCount });
         } catch (error: unknown) {
-            if (error instanceof HttpError) {
-                res.status(error.status).json({ error: error.message });
-            } else {
-                next(new InternalServerError());
-            }
+            throw error;
         }
     }
 }

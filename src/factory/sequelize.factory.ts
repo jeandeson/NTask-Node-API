@@ -17,12 +17,13 @@ export class SequelizeFactoryImpl implements SequelizeFactory {
     private async registerModels(sequelize: Sequelize) {
         const models: any = {};
         const modelsDir = path.join(__dirname, "../models");
-        fs.readdirSync(modelsDir).forEach((file) => {
+        fs.readdirSync(modelsDir).forEach(async (file) => {
             if (file.endsWith(".js") || file.endsWith(".ts")) {
                 const model = require(path.join(modelsDir, file));
                 const modelName = Object.keys(model)[0];
                 const ModelClass: any = Object.values(model)[0];
                 ModelClass.initModel(sequelize);
+                await ModelClass.sync();
                 models[modelName] = ModelClass;
             }
         });

@@ -6,9 +6,17 @@ let sequelize: Sequelize | null = null;
 export async function initTestDB(): Promise<Sequelize> {
     if (!sequelize) {
         sequelize = await createSequelize();
+        await sequelize.sync();
     }
-    await clearDatabase(sequelize);
+
     return sequelize;
+}
+export async function closeTestDB(): Promise<void> {
+    if (sequelize) {
+        await clearDatabase(sequelize);
+        await sequelize.close();
+        sequelize = null;
+    }
 }
 
 async function clearDatabase(sequelize: Sequelize) {

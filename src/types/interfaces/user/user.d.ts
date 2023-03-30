@@ -5,6 +5,8 @@ export interface IUser extends Model {
     name: string;
     email: string;
     password: string;
+    passwordResetTokenHash?: string | null;
+    passwordResetExpiresAt?: Date | null;
 }
 
 export interface IRequestCreateUserDTO {
